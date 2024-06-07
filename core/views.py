@@ -1,20 +1,11 @@
-import threading
-import logging
-import time
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import MessageBoard
 from .forms import MessageForm
-
-# Set up the logging configuration
-LOG_FILE = settings.BASE_DIR / 'debug.log'  # Using environment variable or defaulting to 'debug.log'
-LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
-
-logging.basicConfig(filename=LOG_FILE, level=logging.INFO, format=LOG_FORMAT)
+from .tasks import send_email_task
 
 
 def home(request):
@@ -69,22 +60,5 @@ def send_email(message):
             f'{message.author.profile.name}: {message.body}\n\n'
             f'Regards from\n{settings.DEFAULT_FROM_EMAIL}'
         )
-        email_thread = threading.Thread(target=send_email_thread, args=(subject, body, subscriber))
-        email_thread.start()
+        send_email_task.delay(subject, body, subscriber.email)
 
-
-def send_email_thread(subject, body, subscriber):
-    start_time = time.time()
-    try:
-        email = EmailMessage(subject, body, to=[subscriber.email])
-        email.send()
-        end_time = time.time()
-        time_spent = end_time - start_time
-        content = (
-            f'Email sent to {subscriber.email}\n'
-            f'Subject: {subject}\n'
-            f'Time spent on email: {time_spent:.2f} seconds'
-        )
-        logging.info(content)
-    except Exception as e:
-        logging.error(f'Failed to send email to {subscriber.email}: {e}')

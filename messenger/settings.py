@@ -154,4 +154,6 @@ EMAIL_HOST_USER = 'ignis2a@gmail.com'
 EMAIL_HOST_PASSWORD = 'lkkrgolpwlshestx'
 DEFAULT_FROM_EMAIL = 'Nuntius Tabula'
 
-
+# Celery Task Queue
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
