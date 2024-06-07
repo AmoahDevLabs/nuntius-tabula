@@ -2,7 +2,7 @@
 __pycache__/*
 venv
 env
-media
+media/*
 db.sqlite3
 *.pyc
 *.log
