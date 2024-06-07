@@ -1,0 +1,38 @@
+from allauth.account.models import EmailAddress
+from django.contrib.auth import get_user_model
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+
+from .models import Profile
+
+User = get_user_model()
+
+
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
+    user = instance
+    if created:
+        Profile.objects.create(user=user)
+
+    else:
+        # update allauth email address if exists
+        try:
+            email_address = EmailAddress.objects.get_primary(user)
+            if email_address.email != user.email:
+                email_address.email = user.email
+                email_address.verified = False
+                email_address.save()
+        except:
+            # if allauth email address doesn't exist create one
+            EmailAddress.objects.create(
+                user=user,
+                email=user.email,
+                primary=True,
+                verified=False
+            )
+
+
+@receiver(pre_save, sender=User)
+def update_profile(sender, instance, **kwargs):
+    if instance.username:
+        instance.username = instance.username.lower()
