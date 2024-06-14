@@ -30,6 +30,7 @@ THIRD_PARTY_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'django_celery_results',
     'django_htmx',
     'django_cleanup.apps.CleanupConfig',
 ]
@@ -157,3 +158,6 @@ DEFAULT_FROM_EMAIL = 'Nuntius Tabula'
 # Celery Task Queue
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_EXTENDED = True
+
