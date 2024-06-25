@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import MessageBoard
@@ -62,3 +62,7 @@ def send_email(message):
         )
         send_email_task.delay(subject, body, subscriber.email)
 
+
+@user_passes_test(lambda user: user.is_staff)
+def newsletter(request):
+    return render(request, 'core/news_letter.html')
