@@ -54,6 +54,7 @@ class Profile(models.Model):
     bio = models.TextField(_('biography'), max_length=150, blank=True, null=True)
     address = models.CharField(_('address'), max_length=128, blank=True, null=True)
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE, verbose_name=_('user'))
+    newsletter_subscribed = models.BooleanField(_('newsletter subscribed'), default=True)
     created_at = models.DateTimeField(_('created date'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated date'), auto_now=True)
 
